@@ -1,0 +1,88 @@
+CREATE TABLE user (
+                id_user VARCHAR(50) NOT NULL,
+                username VARCHAR(45) NOT NULL,
+                name VARCHAR(45) NOT NULL,
+                email VARCHAR(45) NOT NULL,
+                password VARCHAR(45) NOT NULL,
+                age INT NOT NULL,
+                admin TINYINT NOT NULL,
+                PRIMARY KEY (id_user)
+);
+
+CREATE TABLE menu (
+                id_menu VARCHAR(50) NOT NULL,
+                tiT_menu VARCHAR(45) NOT NULL,
+                des_menu VARCHAR(45) NOT NULL,
+                padre_menu VARCHAR(45),
+                PRIMARY KEY (id_menu)
+);
+
+CREATE TABLE form (
+                id_form VARCHAR(50) NOT NULL,
+                tit_form VARCHAR(45) NOT NULL,
+                desc_form VARCHAR(45) NOT NULL,
+                id_menu VARCHAR(50) NOT NULL,
+                ready_form INT NOT NULL,
+                PRIMARY KEY (id_form)
+);
+
+CREATE TABLE input (
+                id_input VARCHAR(50) NOT NULL,
+                tag VARCHAR(300) NOT NULL,
+                type VARCHAR(300) NOT NULL,
+                PRIMARY KEY (id_input)
+);
+
+CREATE TABLE form_input (
+                idform_input VARCHAR(50) NOT NULL,
+                id_form VARCHAR(50) NOT NULL,
+                id_input VARCHAR(50) NOT NULL,
+                PRIMARY KEY (id_form_input)
+);
+
+CREATE TABLE user_form (
+                id_user VARCHAR(50) NOT NULL,
+                id_form VARCHAR(50) NOT NULL,
+                fecha_user_form DATE NOT NULL,
+                data_user_form JSON NOT NULL,
+                PRIMARY KEY (id_user, id_form)
+);
+
+ALTER TABLE `db`.`form` 
+ADD CONSTRAINT `menu_form_fk`
+FOREIGN KEY (`id_menu`)
+REFERENCES `db`.`menu` (`id_menu`)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+ALTER TABLE `db`.`form_input` 
+ADD CONSTRAINT `input_forminput_fk`
+  FOREIGN KEY (`id_input`)
+  REFERENCES `db`.`input` (`id_input`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `form_forminput_fk`
+  FOREIGN KEY (`id_form`)
+  REFERENCES `db`.`form` (`id_form`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+ALTER TABLE `db`.`user_form` 
+ADD CONSTRAINT `form_userform_fk`
+  FOREIGN KEY (`id_form`)
+  REFERENCES `db`.`form` (`id_form`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE,
+ADD CONSTRAINT `user_userform_fk`
+  FOREIGN KEY (`id_user`)
+  REFERENCES `db`.`user` (`id_user`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
+create view form_input_view as
+select f.tit_form, f.des_form, f.id_menu, f.id_form, i.id_input, i.tag, i.type
+from form_input fi 
+inner join input i
+on fi.id_input = i.id_input
+inner join form f
+on fi.id_form = f.id_form

@@ -47,7 +47,7 @@ router.post('/register', middleware.isNotLoggedIn, function(req, res, next) {
         if(req.user){
           res.send({
             status: 200,
-            message: "loged in nice :)",
+            message: "logged in nice :)",
             data: req.user})
         }  
       });
